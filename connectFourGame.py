@@ -43,7 +43,7 @@ class C4Board:
     def getTurn(self):
         return self.turn
 
-def isTerminal(board: list[list[str]]) -> bool:
+def boardIsTerminal(board: list[list[str]]) -> bool:
 
     # Checking Rows
     for row in board:
@@ -88,6 +88,6 @@ if __name__ == "__main__":
         ['', '', '', '', '', ''],
         ['', '', '', '', '', '']
     ]
-    print(isTerminal(board.board))
+    print(boardIsTerminal(board.board))
 
         
