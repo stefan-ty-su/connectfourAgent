@@ -49,7 +49,6 @@ def isTerminal(board: list[list[str]]) -> bool:
     for row in board:
         for j in range(C4Board.height-3):
             if row[j] != '' and row[j] == row[j+1] == row[j+2] == row[j+3]:
-                print('A')
                 return True
     
     # Checking Cols
