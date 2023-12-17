@@ -2,6 +2,7 @@ from typing import Self
 from copy import deepcopy
 from connectFourGame import C4Board, boardIsTerminal
 from math import inf
+import time
 
 class GameState:
 
@@ -20,7 +21,7 @@ class GameState:
         self.height = C4Board.height
         self.length = C4Board.length
         if board is None:
-            self.board = [['' for i in range(self.height)] for j in range(self.length)]
+            self.board = [[' ' for i in range(self.height)] for j in range(self.length)]
         else:
             self.board = board
         self.turn = turn
@@ -29,58 +30,58 @@ class GameState:
         # Checking Rows
         for row in self.board:
             for j in range(self.height-3):
-                if row[j] != '' and row[j] == row[j+1] == row[j+2] == row[j+3]:
+                if row[j] != ' ' and row[j] == row[j+1] == row[j+2] == row[j+3]:
                     return True
         
         # Checking Cols
         for j in range(self.height):
             for i in range(self.length-3):
-                if self.board[i][j] != '' and self.board[i][j] == self.board[i+1][j] == self.board[i+2][j] == self.board[i+3][j]:
+                if self.board[i][j] != ' ' and self.board[i][j] == self.board[i+1][j] == self.board[i+2][j] == self.board[i+3][j]:
                     return True
         
         # Checking Descending Diagonals
         for i in range(self.length-3):
             for j in range(self.height-3):
-                if self.board[i][j] != '' and self.board[i][j] == self.board[i+1][j+1] == self.board[i+2][j+2] == self.board[i+3][j+3]:
+                if self.board[i][j] != ' ' and self.board[i][j] == self.board[i+1][j+1] == self.board[i+2][j+2] == self.board[i+3][j+3]:
                     return True
         
         # Checking Ascending Diagonals
         for i in range(self.length-3):
             for j in range(self.height-1, 3, -1):
-                if self.board[i][j] != '' and self.board[i][j] == self.board[i+1][j-1] == self.board[i+2][j-2] == self.board[i+3][j-3]:
+                if self.board[i][j] != ' ' and self.board[i][j] == self.board[i+1][j-1] == self.board[i+2][j-2] == self.board[i+3][j-3]:
                     return True
         
         filled = True
         for i in range(self.length):
-            if self.board[i][self.height-1] == '':
+            if self.board[i][self.height-1] == ' ':
                 filled = False
 
         return filled
     
     def isWin(self) -> str:
-        winner = ''
+        winner = ' '
         # Checking Rows
         for row in self.board:
             for j in range(self.height-3):
-                if row[j] != '' and row[j] == row[j+1] == row[j+2] == row[j+3]:
+                if row[j] != ' ' and row[j] == row[j+1] == row[j+2] == row[j+3]:
                     winner = row[j]
         
         # Checking Cols
         for j in range(self.height):
             for i in range(self.length-3):
-                if self.board[i][j] != '' and self.board[i][j] == self.board[i+1][j] == self.board[i+2][j] == self.board[i+3][j]:
+                if self.board[i][j] != ' ' and self.board[i][j] == self.board[i+1][j] == self.board[i+2][j] == self.board[i+3][j]:
                     winner = self.board[i][j]
         
         # Checking Descending Diagonals
         for i in range(self.length-3):
             for j in range(self.height-3):
-                if self.board[i][j] != '' and self.board[i][j] == self.board[i+1][j+1] == self.board[i+2][j+2] == self.board[i+3][j+3]:
+                if self.board[i][j] != ' ' and self.board[i][j] == self.board[i+1][j+1] == self.board[i+2][j+2] == self.board[i+3][j+3]:
                     winner = self.board[i][j]
                     
         # Checking Ascending Diagonals
         for i in range(self.length-3):
             for j in range(self.height-1, 3, -1):
-                if self.board[i][j] != '' and self.board[i][j] == self.board[i+1][j-1] == self.board[i+2][j-2] == self.board[i+3][j-3]:
+                if self.board[i][j] != ' ' and self.board[i][j] == self.board[i+1][j-1] == self.board[i+2][j-2] == self.board[i+3][j-3]:
                     winner = self.board[i][j]
 
         return winner
@@ -91,7 +92,7 @@ class GameState:
         successors = []
         for row in range(self.length):
             for i in range(self.height):
-                if self.board[row][i] == '':
+                if self.board[row][i] == ' ':
                     
                     newBoard = deepcopy(self.board)
                     newBoard[row][i] = 'x' if self.turn == 0 else 'o'
@@ -106,7 +107,7 @@ class GameState:
         actions = []
         for i in range(self.length):
             for j in range(self.height):
-                if self.board[i][j] == '':
+                if self.board[i][j] == ' ':
                     actions.append(i)
                     break
         
@@ -117,7 +118,7 @@ class GameState:
         nextTurn = 1 if self.turn == 0 else 0
         newBoard = deepcopy(self.board)
         for i, value in enumerate(newBoard[action]):
-            if value == '':
+            if value == ' ':
                 newBoard[action][i] = 'x' if self.turn == 0 else 'o'
                 break
         
@@ -153,7 +154,7 @@ class MiniMaxAgent:
         pass
 
     def play(self, gameState: GameState) -> int:
-
+        st = time.time()
         # Determining who the agent is
         if gameState.turn == 0:
             player = 'x'
@@ -171,6 +172,8 @@ class MiniMaxAgent:
             if value > maxVal:
                 maxVal = value
                 maxAction = action
+
+        print(f"Execution Time: {time.time() - st}")
         return maxAction
     
     def minValue(self, gameState: GameState, player: str, depth) -> int:
@@ -182,7 +185,7 @@ class MiniMaxAgent:
         actions = gameState.generateActions()
         for action in actions:
             successor = gameState.generateSuccessor(action)
-            value = self.maxValue(successor, player, depth + 1)
+            value = self.maxValue(successor, player, depth)
             if value < minVal:
                 minVal = value
         return minVal
@@ -192,27 +195,91 @@ class MiniMaxAgent:
             return gameState.evaluate(player)
         depth +=1 
 
-        minVal = -inf
+        maxVal = -inf
         actions = gameState.generateActions()
         for action in actions:
             successor = gameState.generateSuccessor(action)
-            value = self.minValue(successor, player, depth + 1)
-            if value > minVal:
-                minVal = value
+            value = self.minValue(successor, player, depth)
+            if value > maxVal:
+                maxVal = value
+        return maxVal
+
+class AlphaBetaAgent:
+
+    depthLimit = 5
+    def __init__(self) -> None:
+        pass
+
+    def play(self, gameState: GameState) -> int:
+        st = time.time()
+        # Determining who the agent is
+        if gameState.turn == 0:
+            player = 'x'
+        else:
+            player = 'o'
+
+        alpha = -inf
+        beta = inf
+        actions = gameState.generateActions()
+
+        maxVal = -inf
+        maxAction = None
+        depth = 0
+        for action in actions:
+            successor = gameState.generateSuccessor(action)
+            value = self.minValue(successor, alpha, beta, player, depth)
+            print(f'{action}: {value}')
+            if value > maxVal:
+                maxVal = value
+                maxAction = action
+        
+        print(f"Elapsed Time: {time.time() - st}")
+        return maxAction
+    
+    def minValue(self, gameState: GameState, alpha: float, beta: float,  player: str, depth) -> int:
+        if gameState.isTerminal() or depth > AlphaBetaAgent.depthLimit: 
+            return gameState.evaluate(player)
+        depth += 1
+
+        minVal = inf
+        actions = gameState.generateActions()
+        for action in actions:
+            successor = gameState.generateSuccessor(action)
+            minVal = min(minVal, self.maxValue(successor, alpha, beta, player, depth))
+            if minVal <= alpha:
+                return minVal
+            beta = min(beta, minVal)
         return minVal
+
+    def maxValue(self, gameState: GameState, alpha: float, beta: float, player: str, depth) -> int:
+        if gameState.isTerminal() or depth > AlphaBetaAgent.depthLimit: 
+            return gameState.evaluate(player)
+        depth +=1 
+
+        maxVal = -inf
+        actions = gameState.generateActions()
+        for action in actions:
+            successor = gameState.generateSuccessor(action)
+            maxVal = max(maxVal, self.minValue(successor, alpha, beta, player, depth))
+            if maxVal >= beta:
+                return maxVal
+            alpha = max(alpha, maxVal)
+        return maxVal
 
 if __name__=="__main__":
     b = [
-        ['x', 'o', 'x', 'o', 'x', 'o'],
-        ['', '', '', '', '', ''],
-        ['o', '', '', '', '', ''],
-        ['o', '', '', '', '', ''],
-        ['o', '', '', '', '', ''],
-        ['x', '', '', '', '', ''],
-        ['x', '', '', '', '', '']
+        ['x', 'x', ' ', ' ', ' ', ' '],
+        [' ', ' ', ' ', ' ', ' ', ' '],
+        ['o', 'o', 'x', 'o', ' ', ' '],
+        ['x', 'x', 'o', 'o', ' ', ' '],
+        ['x', 'x', 'x', 'o', ' ', ' '],
+        ['x', 'o', ' ', ' ', ' ', ' '],
+        ['o', 'o', 'x', ' ', ' ', ' ']
     ]
     state = GameState(b)
-    agent = MiniMaxAgent()
+    state.turn = 1
+    # agent = MiniMaxAgent()
+    agent = AlphaBetaAgent()
     move = agent.play(state)
     print(move)
     
