@@ -66,7 +66,7 @@ def boardIsTerminal(board: list[list[str]]) -> bool:
     
     # Checking Ascending Diagonals
     for i in range(C4Board.length-3):
-        for j in range(C4Board.height-1, 3, -1):
+        for j in range(C4Board.height-1, 2, -1):
             if board[i][j] != ' ' and board[i][j] == board[i+1][j-1] == board[i+2][j-2] == board[i+3][j-3]:
                 return True
     

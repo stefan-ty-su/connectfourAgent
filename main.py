@@ -1,5 +1,6 @@
 from agent import *
 from connectFourGame import *
+import sys, getopt
 
 def requestInput() -> int:
     
@@ -15,18 +16,21 @@ def requestInput() -> int:
     
     return playerMove
 
-if __name__ == "__main__":
+def main(argv) -> None:
+
+    opts, args = getopt.getopt(argv, "a:")
+    if len(opts) < 1:
+        raise Exception("Not enough arguments")
+    for opt, arg in opts:
+        if opt == '-a':
+            if arg.lower() == "minimax":
+                print("Using Mini-Max agent")
+                agent = MiniMaxAgent()
+            elif arg.lower() == "alphabeta":
+                print("Using Alpha-Beta agent with Iterative Deepening")
+                agent = AlphaBetaAgent()
+
     game = C4Board()
-    game.board = [
-        ['x', ' ', ' ', ' ', ' ', ' '],
-        [' ', ' ', ' ', ' ', ' ', ' '],
-        ['o', 'o', 'x', 'o', ' ', ' '],
-        ['x', 'x', 'o', 'o', ' ', ' '],
-        ['x', 'x', ' ', ' ', ' ', ' '],
-        ['x', 'o', ' ', ' ', ' ', ' '],
-        ['o', 'o', ' ', ' ', ' ', ' ']
-    ]
-    agent = AlphaBetaAgent()
 
     while not boardIsTerminal(game.board): # While game is not in a terminal state
         
@@ -40,8 +44,15 @@ if __name__ == "__main__":
         input("Continue...")
 
         # Agent's move
-        state = GameState(game.board)
+        state = GameState(game.board, game.turn)
         agentMove = agent.play(state)
         game.playMove(agentMove)
     
-    print('a')
+    winner = state.isWin()
+    if winner != ' ':
+        print(f"The winner is {winner}")
+    else:
+        print("There is no winner")
+
+if __name__ == "__main__":
+    main(sys.argv[1:])

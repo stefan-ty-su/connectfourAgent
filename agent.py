@@ -47,7 +47,7 @@ class GameState:
         
         # Checking Ascending Diagonals
         for i in range(self.length-3):
-            for j in range(self.height-1, 3, -1):
+            for j in range(self.height-1, 2, -1):
                 if self.board[i][j] != ' ' and self.board[i][j] == self.board[i+1][j-1] == self.board[i+2][j-2] == self.board[i+3][j-3]:
                     return True
         
@@ -80,7 +80,7 @@ class GameState:
                     
         # Checking Ascending Diagonals
         for i in range(self.length-3):
-            for j in range(self.height-1, 3, -1):
+            for j in range(self.height-1, 2, -1):
                 if self.board[i][j] != ' ' and self.board[i][j] == self.board[i+1][j-1] == self.board[i+2][j-2] == self.board[i+3][j-3]:
                     winner = self.board[i][j]
 
@@ -173,7 +173,7 @@ class MiniMaxAgent:
                 maxVal = value
                 maxAction = action
 
-        print(f"Execution Time: {time.time() - st}")
+        print(f"Calculation Time: {round(time.time() - st,3)}s")
         return maxAction
     
     def minValue(self, gameState: GameState, player: str, depth) -> int:
@@ -206,7 +206,7 @@ class MiniMaxAgent:
 
 class AlphaBetaAgent:
 
-    depthLimit = 5
+    iterDepthLimit = 5
     def __init__(self) -> None:
         pass
 
@@ -222,22 +222,27 @@ class AlphaBetaAgent:
         beta = inf
         actions = gameState.generateActions()
 
-        maxVal = -inf
-        maxAction = None
-        depth = 0
-        for action in actions:
-            successor = gameState.generateSuccessor(action)
-            value = self.minValue(successor, alpha, beta, player, depth)
-            print(f'{action}: {value}')
-            if value > maxVal:
-                maxVal = value
-                maxAction = action
+        for depthLimit in range(1, AlphaBetaAgent.iterDepthLimit+1):
+            # print(f'Depth - {depthLimit}')
+            maxVal = -inf
+            maxAction = None
+            for action in actions:
+                depth = 0
+                successor = gameState.generateSuccessor(action)
+                value = self.minValue(successor, alpha, beta, player, depth, depthLimit)
+                # print(f'{action}: {value}')
+                if value > maxVal:
+                    maxVal = value
+                    maxAction = action
+            if maxVal == 500:
+                print(f"Calculation Time: {round(time.time() - st,3)}s")
+                return maxAction
         
-        print(f"Elapsed Time: {time.time() - st}")
+        print(f"Calculation Time: {round(time.time() - st,3)}s")
         return maxAction
     
-    def minValue(self, gameState: GameState, alpha: float, beta: float,  player: str, depth) -> int:
-        if gameState.isTerminal() or depth > AlphaBetaAgent.depthLimit: 
+    def minValue(self, gameState: GameState, alpha: float, beta: float,  player: str, depth: int, depthLimit: int) -> int:
+        if gameState.isTerminal() or depth > depthLimit:
             return gameState.evaluate(player)
         depth += 1
 
@@ -245,14 +250,14 @@ class AlphaBetaAgent:
         actions = gameState.generateActions()
         for action in actions:
             successor = gameState.generateSuccessor(action)
-            minVal = min(minVal, self.maxValue(successor, alpha, beta, player, depth))
+            minVal = min(minVal, self.maxValue(successor, alpha, beta, player, depth, depthLimit))
             if minVal <= alpha:
                 return minVal
             beta = min(beta, minVal)
         return minVal
 
-    def maxValue(self, gameState: GameState, alpha: float, beta: float, player: str, depth) -> int:
-        if gameState.isTerminal() or depth > AlphaBetaAgent.depthLimit: 
+    def maxValue(self, gameState: GameState, alpha: float, beta: float, player: str, depth: int, depthLimit: int) -> int:
+        if gameState.isTerminal() or depth > depthLimit:
             return gameState.evaluate(player)
         depth +=1 
 
@@ -260,7 +265,7 @@ class AlphaBetaAgent:
         actions = gameState.generateActions()
         for action in actions:
             successor = gameState.generateSuccessor(action)
-            maxVal = max(maxVal, self.minValue(successor, alpha, beta, player, depth))
+            maxVal = max(maxVal, self.minValue(successor, alpha, beta, player, depth, depthLimit))
             if maxVal >= beta:
                 return maxVal
             alpha = max(alpha, maxVal)
@@ -268,13 +273,13 @@ class AlphaBetaAgent:
 
 if __name__=="__main__":
     b = [
-        ['x', 'x', ' ', ' ', ' ', ' '],
+        ['x', ' ', ' ', ' ', ' ', ' '],
         [' ', ' ', ' ', ' ', ' ', ' '],
         ['o', 'o', 'x', 'o', ' ', ' '],
         ['x', 'x', 'o', 'o', ' ', ' '],
         ['x', 'x', 'x', 'o', ' ', ' '],
         ['x', 'o', ' ', ' ', ' ', ' '],
-        ['o', 'o', 'x', ' ', ' ', ' ']
+        ['o', 'o', ' ', ' ', ' ', ' ']
     ]
     state = GameState(b)
     state.turn = 1
