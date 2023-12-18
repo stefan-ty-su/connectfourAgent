@@ -173,7 +173,7 @@ class MiniMaxAgent:
                 maxVal = value
                 maxAction = action
 
-        print(f"Execution Time: {time.time() - st}")
+        print(f"Calculation Time: {round(time.time() - st,3)}s")
         return maxAction
     
     def minValue(self, gameState: GameState, player: str, depth) -> int:
@@ -235,9 +235,10 @@ class AlphaBetaAgent:
                     maxVal = value
                     maxAction = action
             if maxVal == 500:
+                print(f"Calculation Time: {round(time.time() - st,3)}s")
                 return maxAction
         
-        print(f"Elapsed Time: {time.time() - st}")
+        print(f"Calculation Time: {round(time.time() - st,3)}s")
         return maxAction
     
     def minValue(self, gameState: GameState, alpha: float, beta: float,  player: str, depth: int, depthLimit: int) -> int:
