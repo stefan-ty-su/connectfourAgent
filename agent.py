@@ -206,7 +206,7 @@ class MiniMaxAgent:
 
 class AlphaBetaAgent:
 
-    iterDepthLimit = 5
+    iterDepthLimit = 6
     def __init__(self) -> None:
         pass
 
